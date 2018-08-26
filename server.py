@@ -43,7 +43,9 @@ for feed in urls:
     for item in d.entries:
         items.append(item)
 
-print ("Server is ready, checking for new items now and every " + str(wait_time) + "seconds")
+print ("Server is ready, checking for new items every " + str(wait_time) + "seconds")
+
+time.sleep(wait_time)
 
 while True:
     temp_items = []
