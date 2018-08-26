@@ -1,2 +1,3 @@
-# Dependencies:
+### Dependencies:
 * firebase_admin
+* feedparser

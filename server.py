@@ -1,28 +1,65 @@
+import feedparser
 import firebase_admin
+import datetime
+import time
 
 from firebase_admin import credentials
 from firebase_admin import messaging
 from firebase_admin import db
+
+urls = [
+    "https://www.tipsbladet.dk/danmark/esbjerg-fb-male/feed",
+    "https://www.jv.dk/rss/efb",
+    "https://www.bold.dk/feed/rss_by_tag/8467/"
+]
+
+items = []
+
+wait_time = 60
 
 cred = credentials.Certificate('rssnotifier-8d4ed-firebase-adminsdk-shmqn-a2d9bfc911.json')
 firebase_admin.initialize_app(cred, {
     'databaseURL' : 'https://rssnotifier-8d4ed.firebaseio.com/'
 })
 
-token = db.reference('token').get()
-
-message = messaging.Message(
-    token=token,
-    android=messaging.AndroidConfig(
-        notification=messaging.AndroidNotification(
-            title='News',
-            body='Test'
-        ),
+def sendMessage(item):
+    message = messaging.Message(
+        token=db.reference('token').get(),
+        android=messaging.AndroidConfig(
+            priority='high',
+            notification=messaging.AndroidNotification(
+                title='News',
+                body=item.title
+            )
+        )
     )
-)
 
-# Send a message to the device corresponding to the provided
-# registration token.
-response = messaging.send(message)
-# Response is a message ID string.
-print('Successfully sent message:', response)
+    messaging.send(message)
+    print ("Message sent: " + item.title)
+
+
+for feed in urls:
+    d = feedparser.parse(feed)
+    for item in d.entries:
+        items.append(item)
+
+print ("Server is ready, checking for new items now and every " + str(wait_time) + "seconds")
+
+while True:
+    temp_items = []
+    new_item = False
+
+    for feed in urls:
+        d = feedparser.parse(feed)
+        for item in d.entries:
+            temp_items.append(item)
+
+    for item in temp_items:
+        if (items.count(item) == 0):
+            sendMessage(item)
+            new_item = True
+
+    if (new_item):
+        items = temp_items
+
+    time.sleep(wait_time)
