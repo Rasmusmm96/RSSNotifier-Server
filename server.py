@@ -25,13 +25,10 @@ firebase_admin.initialize_app(cred, {
 def sendMessage(item):
     message = messaging.Message(
         token=db.reference('token').get(),
-        android=messaging.AndroidConfig(
-            priority='high',
-            notification=messaging.AndroidNotification(
-                title='News',
-                body=item.title
-            )
-        )
+        data={
+            'title': item.title,
+            'link': item.link
+        }
     )
 
     messaging.send(message)
