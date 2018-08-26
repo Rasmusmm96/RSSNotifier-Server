@@ -1,0 +1,2 @@
+# Dependencies:
+* firebase_admin
