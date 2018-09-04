@@ -10,7 +10,8 @@ from firebase_admin import db
 urls = [
     "https://www.tipsbladet.dk/danmark/esbjerg-fb-male/feed",
     "https://www.jv.dk/rss/efb",
-    "https://www.bold.dk/feed/rss_by_tag/8467/"
+    "https://www.bold.dk/feed/rss_by_tag/8467/",
+    "https://www.efb.dk/feed/"
 ]
 
 items = []
