@@ -8,13 +8,14 @@ from firebase_admin import messaging
 from firebase_admin import db
 
 urls = [
-    "https://www.tipsbladet.dk/danmark/esbjerg-fb-male/feed",
-    "https://www.jv.dk/rss/efb",
-    "https://www.bold.dk/feed/rss_by_tag/8467/",
-    "https://www.efb.dk/feed/"
+    "https://www.jv.dk/rss/nyheder"
+    # "https://www.tipsbladet.dk/danmark/esbjerg-fb-male/feed",
+    # "https://www.jv.dk/rss/efb",
+    # "https://www.bold.dk/feed/rss_by_tag/8467/",
+    # "https://www.efb.dk/feed/"
 ]
 
-items = []
+links = []
 
 wait_time = 60
 
@@ -39,7 +40,7 @@ def sendMessage(item):
 for feed in urls:
     d = feedparser.parse(feed)
     for item in d.entries:
-        items.append(item)
+        links.append(item.link)
 
 print ("Server is ready, checking for new items every " + str(wait_time) + "seconds")
 
@@ -52,14 +53,17 @@ while True:
     for feed in urls:
         d = feedparser.parse(feed)
         for item in d.entries:
+            item.feed = feed.title
             temp_items.append(item)
 
     for item in temp_items:
-        if (items.count(item) == 0):
+        if (links.count(item.link) == 0):
             sendMessage(item)
             new_item = True
 
     if (new_item):
-        items = temp_items
+        links = []
+        for item in temp_items:
+            links.append(item.link)
 
     time.sleep(wait_time)
