@@ -61,7 +61,7 @@ while True:
             new_item = True
 
     if (new_item):
-        links = []
+        links.clear()
         for item in temp_items:
             links.append(item.link)
 
