@@ -5,7 +5,6 @@ import time
 
 from firebase_admin import credentials
 from firebase_admin import messaging
-from firebase_admin import db
 
 urls = [
     "https://www.tipsbladet.dk/danmark/esbjerg-fb-male/feed",
@@ -19,13 +18,11 @@ links = []
 wait_time = 60
 
 cred = credentials.Certificate('rssnotifier-8d4ed-firebase-adminsdk-shmqn-a2d9bfc911.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL' : 'https://rssnotifier-8d4ed.firebaseio.com/'
-})
+firebase_admin.initialize_app(cred)
 
 def sendMessage(item):
     message = messaging.Message(
-        token=db.reference('token').get(),
+        topic='efb',
         data={
             'title': item.title,
             'link': item.link
