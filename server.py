@@ -17,20 +17,20 @@ links = []
 
 wait_time = 60
 
-cred = credentials.Certificate('rssnotifier-8d4ed-firebase-adminsdk-shmqn-a2d9bfc911.json')
+cred = credentials.Certificate('/home/rallemm96/RSSNotifier-Server/rssnotifier-8d4ed-firebase-adminsdk-shmqn-a2d9bfc911.json')
 firebase_admin.initialize_app(cred)
 
-def sendMessage(item):
+def sendMessage(title, link):
     message = messaging.Message(
         topic='efb',
         data={
-            'title': item.title,
-            'link': item.link
+            'title': title,
+            'link': link
         }
     )
 
     messaging.send(message)
-    print ("Message sent: " + item.title)
+    print ("Message sent: " + title)
 
 
 for feed in urls:
@@ -39,6 +39,7 @@ for feed in urls:
         links.append(item.link)
 
 print ("Server is ready, checking for new items every " + str(wait_time) + "seconds")
+sendMessage('Servicen er genstartet', 'https://mohring.dk')
 
 time.sleep(wait_time)
 
@@ -54,7 +55,7 @@ while True:
 
     for item in temp_items:
         if (links.count(item.link) == 0):
-            sendMessage(item)
+            sendMessage(item.title, item.link)
             new_item = True
 
     if (new_item):
